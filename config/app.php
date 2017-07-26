@@ -12,7 +12,7 @@ return [
     | any other location as required by the application or its packages.
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => 'Laravel',
 
     /*
     |--------------------------------------------------------------------------
@@ -176,6 +176,14 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Alaouy\Youtube\YoutubeServiceProvider::class,
+        Collective\Html\HtmlServiceProvider::class,
+        Zarlach\TwitchApi\Providers\TwitchApiServiceProvider::class,
+        App\Providers\TwitchServiceProvider::class,
+        App\Providers\VideoServiceProvider::class,
+
+        App\Providers\YoutubeServiceProvider::class,
+        Prettus\Repository\Providers\RepositoryServiceProvider::class,
 
     ],
 
@@ -225,7 +233,10 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-
+        // 'Alaouy\Youtube' => Alaouy\Youtube\Facades\Youtube::class,
+        'Form' => Collective\Html\FormFacade::class,
+        'Html' => Collective\Html\HtmlFacade::class,
+        'TwitchApi' => Zarlach\TwitchApi\Facades\TwitchApiServiceFacade::class,
     ],
 
 ];
