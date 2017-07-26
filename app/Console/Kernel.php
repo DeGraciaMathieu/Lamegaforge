@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        \App\Console\Commands\HydrateVideos::class,
+        \App\Console\Commands\SaveNewVideo::class,
     ];
 
     /**
