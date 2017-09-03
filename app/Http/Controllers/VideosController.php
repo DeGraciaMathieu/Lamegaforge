@@ -1,72 +1,56 @@
 <?php namespace App\Http\Controllers;
 
+use App\Http\Requests;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Repositories\VideoRepository;
-use App\Repositories\Criteria\Videos\Limit;
-use App\Repositories\Criteria\Videos\Search;
-use App\Repositories\Criteria\Videos\Random;
-use App\Repositories\Criteria\Videos\Online;
-use App\Repositories\Criteria\Videos\OrderByRate;
-use App\Repositories\Criteria\Videos\OrderByDesc;
-use App\Repositories\Criteria\Videos\OrderByTitle;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Repositories\Video\Criteria;
 
 class VideosController extends Controller
 {
     /**
      * @param \App\Repositories\VideosRepository $video
      */
-    // public function __construct(VideoRepository $videoRepository)
-    // {
-    //     $this->videoRepository = $videoRepository;
-    // }
+    public function __construct()
+    {
+        $this->videoRepository = app('App\Repositories\Video\VideoRepository');
+    }
 
     /**
      * @param  \Illuminate\Http\Request $request
      * @return view
      */
-    // public function index(Request $request, $sort = null)
-    // {
-    //     $this->videoRepository->pushCriteria(new Online);
+    public function index(Request $request, $sort = null)
+    {
+        $this->videoRepository->pushCriteria(new Criteria\Online);
 
-    //     switch ($sort) {
-    //         case 'rate':
-    //             $this->videoRepository->pushCriteria(new OrderByRate);
-    //             break;
-    //         case 'title':
-    //             $this->videoRepository->pushCriteria(new OrderByTitle);
-    //             break;
-    //         default:
-    //             $this->videoRepository->pushCriteria(new OrderByDesc);
-    //             break;
-    //     }
+        switch ($sort) {
+            case 'rate':
+                $this->videoRepository->pushCriteria(new Criteria\OrderByRate);
+                break;
+            case 'title':
+                $this->videoRepository->pushCriteria(new Criteria\OrderByTitle);
+                break;
+            default:
+                $this->videoRepository->pushCriteria(new Criteria\OrderByDesc);
+                break;
+        }
 
-    //     if ($request->has('search')) {
+        if ($request->has('search')) {
 
-    //         $columns = ['title', 'description'];
-    //         $search = $request->get('search');
+            $columns = ['title', 'description'];
+            $search = $request->get('search');
 
-    //         $this->videoRepository->pushCriteria(new Search($columns, $search));
-    //     }
+            $this->videoRepository->pushCriteria(new Criteria\Search($columns, $search));
+        }
 
-    //     return view('video.index', ['videos' => $this->videoRepository->paginate(20)]);
-    // }
+        return view('video.index', ['videos' => $this->videoRepository->paginate(20)]);
+    }
 
     public function show(Request $request, $id)
     {
         $selectedVideo = app('services\video')->getOnlineVideoById($id);
-        $comments = $selectedVideo->comments()->where('related_comment', '!=', '')->get();
+        $comments = $selectedVideo->comments()->whereNull('related_comment')->get();
         $randomVideos = app('services\video')->randomOnlineVideos(5);
-
-        // foreach ($selectedVideo->comments()->where('related_comment', '!=', '')->get() as $comment) {
-        //    dd($comment);
-        // }
-
-        // // $comments = $selectedVideo->comments()->where('related_comment', '!=', '')->get();
-        // $comments = $selectedVideo->comments()->where('related_comment', '!=', '')->get();
-
-        // dd($comments->first()->relatedComments);
 
         return view('video.show', [
             'video' => $selectedVideo,
@@ -75,22 +59,15 @@ class VideosController extends Controller
         ]);
     }
 
-    public function pushComment(StoreVideoCommentRequest $request)
+    public function pushComment(Requests\StoreVideoCommentRequest $request)
     {
+        app('services\video')->pushComment(
+            $request->get('video_id'), 
+            auth()->user()->id,
+            $request->get('content'), 
+            $request->get('related_comment')
+        );
 
-        die("d");
-
-     //    $selectedVideo = app('services\video')->pushComment($id);
-
-     //    $video = Video::findOrFail('id', $request->get('video_id'));
-
-     //    $params = [
-     //        $request->all(),
-     //        'user_id' => auth()->user()->id
-     //    ];
-
-     //    $comment = new Comment($params);
-
-    	// $video->comments()->save($comment);
+        return response()->json(['response' => 'success']);
     }
 }

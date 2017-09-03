@@ -8,9 +8,6 @@ Class VideoService {
 
 	use Traits\Repository;
 	use Traits\Youtube;
-
-	public function pushComment()
-	{
-
-	}
+    use Traits\Comment;
+    
 }

@@ -17,7 +17,7 @@ class CreateVideoCommentsTable extends Migration
             $table->increments('id');
             $table->string('video_id')->unsigned();
             $table->string('user_id')->unsigned();
-            $table->string('related_comment')->unsigned();
+            $table->string('related_comment')->nullable()->unsigned();
             $table->string('content');
             $table->boolean('online')->default(false);
             $table->boolean('checked')->default(false);

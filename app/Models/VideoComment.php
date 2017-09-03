@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class VideoComment extends Model
 {
+    public $fillable = [
+        'id',
+        'user_id',
+        'content',
+        'related_comment'
+    ];
+
     public $timestamps = true;
 
     public function user()
@@ -20,6 +27,6 @@ class VideoComment extends Model
 
     public function relatedComments()
     {
-        return $this->hasMany(VideoComment::class, 'id');
+        return $this->hasMany(VideoComment::class, 'related_comment');
     }
 }
