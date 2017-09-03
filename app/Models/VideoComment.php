@@ -8,6 +8,7 @@ class VideoComment extends Model
 {
     public $fillable = [
         'id',
+        'video_id',
         'user_id',
         'content',
         'related_comment'
